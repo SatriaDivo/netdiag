@@ -8,10 +8,11 @@ dll
 
 import sys
 import argparse
-from . import ping, traceroute, get_local_ip, get_public_ip, scan_ports, dns_lookup
-from .portscan import scan_common_ports
-from .dnslookup import reverse_dns_lookup, get_dns_info, dns_bulk_lookup, check_dns_servers
-from .iputils import get_ip_info
+from .ping import ping
+from .traceroute import traceroute
+from .iputils import get_local_ip, get_public_ip, get_ip_info
+from .portscan import scan_ports, scan_common_ports
+from .dnslookup import dns_lookup, reverse_dns_lookup, get_dns_info, dns_bulk_lookup, check_dns_servers
 
 
 def main():
@@ -67,7 +68,7 @@ def handle_ping(args):
     timeout = int(args[2]) if len(args) > 2 else 5
     
     print(f"🏓 Pinging {host} with {count} packets...")
-    result = ping.ping(host, count, timeout)
+    result = ping(host, count, timeout)
     
     if result['success']:
         print(f"✅ Ping successful!")
@@ -94,7 +95,7 @@ def handle_traceroute(args):
     timeout = int(args[2]) if len(args) > 2 else 5
     
     print(f"🔍 Tracing route to {host} (max {max_hops} hops)...")
-    result = traceroute.traceroute(host, max_hops, timeout)
+    result = traceroute(host, max_hops, timeout)
     
     if result['success']:
         print(f"✅ Traceroute completed!")
