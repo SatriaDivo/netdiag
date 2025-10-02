@@ -15,7 +15,18 @@ from netdiag import (
     get_local_ip, 
     get_public_ip, 
     scan_ports, 
-    dns_lookup
+    dns_lookup,
+    # New v1.1.0 features
+    get_ip_info,
+    scan_common_ports,
+    bandwidth_test,
+    ping_latency_test,
+    connection_quality_test,
+    get_network_interfaces,
+    get_default_gateway,
+    analyze_network_config,
+    export_results,
+    create_logger
 )
 from netdiag.portscan import scan_common_ports
 from netdiag.dnslookup import reverse_dns_lookup, get_dns_info, dns_bulk_lookup
@@ -255,9 +266,94 @@ def demo_integration():
     print(f"\n✅ Analysis complete for {host}")
 
 
+def demo_speedtest():
+    """Demo fitur speed test yang baru"""
+    print_section("DEMO: SPEED TEST (NEW)")
+    
+    # Quick latency test
+    host = "google.com"
+    print(f"\n🏓 Quick latency test to {host}...")
+    latency_result = ping_latency_test(host, count=5)
+    
+    if latency_result['success']:
+        print(f"   ✅ SUCCESS: {latency_result['successful_pings']}/5 pings successful")
+        print(f"   📊 Average latency: {latency_result['avg_latency']} ms")
+        print(f"   📊 Jitter: {latency_result['jitter']} ms")
+        print(f"   📊 Packet loss: {latency_result['packet_loss_percent']}%")
+    else:
+        print(f"   ❌ FAILED: {latency_result['error']}")
+    
+    # Small bandwidth test (commented out to avoid long wait)
+    print(f"\n🚀 Bandwidth test (NOTE: Skipped in demo to save time)")
+    print(f"   💡 To run: bandwidth_test('1MB')")
+    print(f"   💡 Example output: Download speed: 25.3 Mbps")
+    
+    # Connection quality assessment (using latency only)
+    print(f"\n🔍 Connection quality assessment (based on latency)...")
+    if latency_result['success']:
+        avg_latency = latency_result['avg_latency']
+        packet_loss = latency_result['packet_loss_percent']
+        
+        if avg_latency <= 50 and packet_loss == 0:
+            quality = "Excellent"
+        elif avg_latency <= 100 and packet_loss <= 1:
+            quality = "Good"
+        elif avg_latency <= 200 and packet_loss <= 5:
+            quality = "Fair"
+        else:
+            quality = "Poor"
+        
+        print(f"   📈 Connection quality: {quality}")
+        print(f"   💡 Based on latency: {avg_latency} ms, packet loss: {packet_loss}%")
+
+
+def demo_interfaces():
+    """Demo fitur network interfaces yang baru"""
+    print_section("DEMO: NETWORK INTERFACES (NEW)")
+    
+    # Get network interfaces
+    print(f"\n🔍 Scanning network interfaces...")
+    interfaces_result = get_network_interfaces()
+    
+    if interfaces_result['success']:
+        print(f"   ✅ SUCCESS: Found {interfaces_result['total_interfaces']} interfaces")
+        print(f"   📊 Active interfaces: {len(interfaces_result['active_interfaces'])}")
+        print(f"   💻 System: {interfaces_result['system']}")
+        
+        print(f"\n   Active interfaces:")
+        for interface in interfaces_result['active_interfaces'][:5]:  # Show max 5
+            status_icon = "🟢" if interface['status'] == 'up' else "🔴"
+            print(f"   {status_icon} {interface['name']} ({interface['type']})")
+            if interface['ip']:
+                print(f"      📍 IP: {interface['ip']}")
+        
+        if len(interfaces_result['active_interfaces']) > 5:
+            remaining = len(interfaces_result['active_interfaces']) - 5
+            print(f"   ... and {remaining} more interfaces")
+    else:
+        print(f"   ❌ FAILED: {interfaces_result['error']}")
+    
+    # Get default gateway
+    print(f"\n🌐 Getting default gateway...")
+    gateway_result = get_default_gateway()
+    
+    if gateway_result['success']:
+        print(f"   ✅ SUCCESS: Gateway found")
+        print(f"   🚪 Gateway IP: {gateway_result['gateway_ip']}")
+        if gateway_result.get('interface'):
+            print(f"   🔗 Interface: {gateway_result['interface']}")
+    else:
+        print(f"   ❌ FAILED: {gateway_result['error']}")
+    
+    # Network analysis summary
+    print(f"\n📋 Quick network analysis...")
+    print(f"   💡 For full analysis, use: analyze_network_config()")
+    print(f"   💡 This provides comprehensive network configuration analysis")
+
+
 def main():
     """Main function untuk menjalankan semua demo"""
-    print("🔧 NETDIAG - Network Diagnostics Toolkit")
+    print("🔧 NETDIAG - Network Diagnostics Toolkit v1.1.0")
     print("📚 Demo penggunaan library untuk educational purposes")
     print("⚠️  Note: Beberapa test mungkin membutuhkan koneksi internet yang stabil")
     
@@ -268,6 +364,8 @@ def main():
         ("Ping Test", demo_ping),
         ("Port Scanning", demo_port_scan),
         ("Traceroute", demo_traceroute),
+        ("Speed Test (NEW)", demo_speedtest),
+        ("Network Interfaces (NEW)", demo_interfaces),
         ("Integrated Analysis", demo_integration),
     ]
     
@@ -280,6 +378,8 @@ def main():
             'ping': demo_ping,
             'port': demo_port_scan,
             'trace': demo_traceroute,
+            'speed': demo_speedtest,
+            'interfaces': demo_interfaces,
             'integration': demo_integration,
         }
         
@@ -288,7 +388,7 @@ def main():
             demo_map[demo_name]()
         else:
             print(f"\n❌ Unknown demo: {demo_name}")
-            print("Available demos: ip, dns, ping, port, trace, integration")
+            print("Available demos: ip, dns, ping, port, trace, speed, interfaces, integration")
         return
     
     # Jalankan semua demo
@@ -313,6 +413,8 @@ def main():
     print(f"  python example.py ping      # Run ping demo only")
     print(f"  python example.py port      # Run port scan demo only")
     print(f"  python example.py trace     # Run traceroute demo only")
+    print(f"  python example.py speed       # Run speed test demo only")
+    print(f"  python example.py interfaces  # Run interfaces demo only")
     print(f"  python example.py integration # Run integration demo only")
 
 

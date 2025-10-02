@@ -13,6 +13,9 @@ from .traceroute import traceroute
 from .iputils import get_local_ip, get_public_ip, get_ip_info
 from .portscan import scan_ports, scan_common_ports
 from .dnslookup import dns_lookup, reverse_dns_lookup, get_dns_info, dns_bulk_lookup, check_dns_servers
+from .speedtest import bandwidth_test, ping_latency_test, connection_quality_test
+from .interfaces import get_network_interfaces, get_default_gateway, analyze_network_config
+from .export import export_results, create_logger
 
 
 def main():
@@ -44,6 +47,14 @@ def main():
             handle_dns(remaining_args)
         elif command == "ipinfo":
             handle_ip_info(remaining_args)
+        elif command == "speedtest" or command == "speed":
+            handle_speedtest(remaining_args)
+        elif command == "interfaces" or command == "if":
+            handle_interfaces(remaining_args)
+        elif command == "analyze":
+            handle_network_analyze()
+        elif command == "export":
+            handle_export(remaining_args)
         elif command == "help" or command == "-h" or command == "--help":
             print_help()
         else:
@@ -314,7 +325,7 @@ def handle_ip_info(args):
 def print_help():
     """Print help information"""
     print("""
-🔧 Netdiag - Network Diagnostics Toolkit
+🔧 Netdiag - Network Diagnostics Toolkit v1.1.0
 
 Usage: python -m netdiag <command> [arguments]
 
@@ -356,11 +367,199 @@ Available Commands:
     Example: python -m netdiag ipinfo 8.8.8.8
     Example: python -m netdiag ipinfo (uses your public IP)
 
+  speedtest [size]
+  speedtest latency <host>
+  speedtest quality <host>
+    Network speed and quality tests
+    Example: python -m netdiag speedtest 5MB
+    Example: python -m netdiag speedtest latency google.com
+    Example: python -m netdiag speedtest quality google.com
+
+  interfaces
+  interfaces gateway
+    Network interface information
+    Example: python -m netdiag interfaces
+    Example: python -m netdiag interfaces gateway
+
+  analyze
+    Complete network configuration analysis
+    Example: python -m netdiag analyze
+
+  export <format> <filename>
+    Export last test results to file
+    Example: python -m netdiag export json results
+
   help
     Show this help message
 
 For more information, see the README.md file.
 """)
+
+
+def handle_speedtest(args):
+    """Handle speedtest command"""
+    if not args:
+        # Default bandwidth test
+        print("🚀 Running bandwidth test (5MB)...")
+        result = bandwidth_test('5MB')
+        
+        if result['success']:
+            print(f"✅ Bandwidth test successful!")
+            print(f"   Download speed: {result['download_speed_mbps']} Mbps")
+            print(f"   Download time: {result['download_time']} seconds")
+            print(f"   Test server: {result['test_url']}")
+        else:
+            print(f"❌ Bandwidth test failed: {result['error']}")
+        return
+    
+    subcommand = args[0].lower()
+    
+    if subcommand == "latency" and len(args) > 1:
+        host = args[1]
+        count = int(args[2]) if len(args) > 2 else 10
+        
+        print(f"📊 Running latency test to {host} ({count} pings)...")
+        result = ping_latency_test(host, count)
+        
+        if result['success']:
+            print(f"✅ Latency test successful!")
+            print(f"   Host: {result['host']}")
+            print(f"   Successful pings: {result['successful_pings']}/{result['total_pings']}")
+            print(f"   Average latency: {result['avg_latency']} ms")
+            print(f"   Min/Max latency: {result['min_latency']}/{result['max_latency']} ms")
+            print(f"   Jitter: {result['jitter']} ms")
+            print(f"   Packet loss: {result['packet_loss_percent']}%")
+        else:
+            print(f"❌ Latency test failed: {result['error']}")
+    
+    elif subcommand == "quality" and len(args) > 1:
+        host = args[1]
+        print(f"🔍 Running connection quality test...")
+        result = connection_quality_test(host)
+        
+        if result['success']:
+            print(f"✅ Connection quality test completed!")
+            print(f"   Overall score: {result['quality_score']}/100")
+            print(f"   Quality rating: {result['quality_rating']}")
+            
+            if result['bandwidth_test']['success']:
+                print(f"   Download speed: {result['bandwidth_test']['download_speed_mbps']} Mbps")
+            
+            if result['latency_test']['success']:
+                print(f"   Average latency: {result['latency_test']['avg_latency']} ms")
+                print(f"   Packet loss: {result['latency_test']['packet_loss_percent']}%")
+            
+            print(f"\n   Recommendations:")
+            for rec in result['recommendations']:
+                print(f"   - {rec}")
+        else:
+            print(f"❌ Quality test failed: {result['error']}")
+    
+    else:
+        # Bandwidth test with size
+        size = subcommand if subcommand in ['1MB', '5MB', '10MB'] else '5MB'
+        print(f"🚀 Running bandwidth test ({size})...")
+        result = bandwidth_test(size)
+        
+        if result['success']:
+            print(f"✅ Bandwidth test successful!")
+            print(f"   Download speed: {result['download_speed_mbps']} Mbps")
+            print(f"   Download time: {result['download_time']} seconds")
+            print(f"   Bytes downloaded: {result['bytes_downloaded']:,}")
+            print(f"   Test server: {result['test_url']}")
+        else:
+            print(f"❌ Bandwidth test failed: {result['error']}")
+
+
+def handle_interfaces(args):
+    """Handle interfaces command"""
+    if not args:
+        # List interfaces
+        print("🔍 Getting network interfaces...")
+        result = get_network_interfaces()
+        
+        if result['success']:
+            print(f"✅ Found {result['total_interfaces']} network interfaces")
+            print(f"   Active interfaces: {len(result['active_interfaces'])}")
+            print(f"   System: {result['system']}")
+            
+            print(f"\n   Active interfaces:")
+            for interface in result['active_interfaces']:
+                status_icon = "🟢" if interface['status'] == 'up' else "🔴"
+                print(f"   {status_icon} {interface['name']} ({interface['type']})")
+                if interface['ip']:
+                    print(f"      IP: {interface['ip']}")
+                if interface['mac']:
+                    print(f"      MAC: {interface['mac']}")
+                print()
+        else:
+            print(f"❌ Failed to get interfaces: {result['error']}")
+        return
+    
+    subcommand = args[0].lower()
+    
+    if subcommand == "gateway":
+        print("🔍 Getting default gateway...")
+        result = get_default_gateway()
+        
+        if result['success']:
+            print(f"✅ Default gateway found!")
+            print(f"   Gateway IP: {result['gateway_ip']}")
+            if result['interface']:
+                print(f"   Interface: {result['interface']}")
+        else:
+            print(f"❌ Failed to get gateway: {result['error']}")
+
+
+def handle_network_analyze():
+    """Handle network analyze command"""
+    print("🔍 Starting comprehensive network analysis...")
+    result = analyze_network_config()
+    
+    if result['success']:
+        print(f"\n✅ Network analysis completed!")
+        
+        summary = result['summary']
+        print(f"\n📊 Summary:")
+        print(f"   Total interfaces: {summary['total_interfaces']}")
+        print(f"   Active interfaces: {summary['active_interfaces']}")
+        if summary['primary_interface']:
+            print(f"   Primary interface: {summary['primary_interface']}")
+        print(f"   Has gateway: {'✅' if summary['has_gateway'] else '❌'}")
+        print(f"   DNS working: {'✅' if summary['dns_working'] else '❌'}")
+        print(f"   Internet connectivity: {'✅' if summary['internet_connectivity'] else '❌'}")
+        
+        if summary['issues']:
+            print(f"\n⚠️  Issues found:")
+            for issue in summary['issues']:
+                print(f"   - {issue}")
+        
+        if summary['recommendations']:
+            print(f"\n💡 Recommendations:")
+            for rec in summary['recommendations']:
+                print(f"   - {rec}")
+    else:
+        print(f"❌ Network analysis failed: {result['error']}")
+
+
+def handle_export(args):
+    """Handle export command"""
+    if len(args) < 2:
+        print("❌ Error: Please specify format and filename")
+        print("Usage: python -m netdiag export <format> <filename>")
+        print("Formats: json, csv, txt")
+        return
+    
+    format_type = args[0].lower()
+    filename = args[1]
+    
+    print(f"📤 Export functionality requires test results to export.")
+    print(f"   Run a test first, then use the export function programmatically.")
+    print(f"   Example usage in Python:")
+    print(f"   >>> from netdiag import ping, export_results")
+    print(f"   >>> result = ping('google.com')")
+    print(f"   >>> export_info = export_results(result, '{filename}', '{format_type}')")
+    print(f"   >>> print(f'Exported to: {{export_info[\"filename\"]}}')")
 
 
 if __name__ == "__main__":

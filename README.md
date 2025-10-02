@@ -1,14 +1,16 @@
-# 🔧 Netdiag - Network Diagnostics Toolkit
+# 🔧 Netdiag - Network Diagnostics Toolkit v1.1.0
 
 [![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Educational](https://img.shields.io/badge/purpose-educational-orange.svg)](https://github.com/yourusername/netdiag)
+[![Educational](https://img.shields.io/badge/purpose-educational-orange.svg)](https://github.com/SatriaDivo/netdiag)
+[![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/SatriaDivo/netdiag)
 
 **Netdiag** adalah library Python untuk diagnosa jaringan yang dirancang khusus untuk keperluan edukasi mahasiswa jurusan Teknologi Rekayasa Internet. Library ini menggunakan modul bawaan Python sebanyak mungkin untuk memberikan pemahaman mendalam tentang networking fundamentals.
 
 ## 📋 Daftar Isi
 
 - [Fitur Utama](#-fitur-utama)
+- [Fitur Baru v1.1.0](#-fitur-baru-v110)
 - [Instalasi](#-instalasi)
 - [Penggunaan Dasar](#-penggunaan-dasar)
 - [Fungsi yang Tersedia](#-fungsi-yang-tersedia)
@@ -16,6 +18,7 @@
 - [Contoh Penggunaan](#-contoh-penggunaan)
 - [Struktur Proyek](#-struktur-proyek)
 - [Pengembangan](#-pengembangan)
+- [Changelog](#-changelog)
 - [Lisensi](#-lisensi)
 
 ## 🚀 Fitur Utama
@@ -24,6 +27,7 @@
 - Ping ke host dengan deteksi OS otomatis (Windows/Linux/Mac)
 - Parsing output untuk statistik packet loss dan response time
 - Support untuk custom count dan timeout
+- **NEW v1.1.0**: Advanced latency analysis dengan jitter calculation
 
 ### 🔍 Traceroute
 - Traceroute dengan dukungan multi-platform
@@ -39,12 +43,37 @@
 - TCP port scanning dengan threading untuk performa optimal
 - Scanning port range custom atau common ports
 - Service detection untuk port yang terbuka
+- **NEW v1.1.0**: Optimized common ports scanning
 
 ### 🔎 DNS Lookup
 - Forward DNS lookup (hostname → IP)
 - Reverse DNS lookup (IP → hostname)
 - Bulk DNS lookup untuk multiple hostnames
 - Full DNS info dengan IPv4/IPv6 support
+- **NEW v1.1.0**: Enhanced DNS operations dan batch processing
+
+## 🆕 Fitur Baru v1.1.0
+
+### 🚀 Speed Testing & Performance Analysis
+- **`bandwidth_test()`** - Measure download speed dengan test files
+- **`ping_latency_test()`** - Advanced latency analysis dengan statistik lengkap
+- **`connection_quality_test()`** - Comprehensive connection quality assessment
+
+### 🌐 Network Interface Management
+- **`get_network_interfaces()`** - Discover semua network interfaces system
+- **`get_default_gateway()`** - Informasi default gateway
+- **`analyze_network_config()`** - Complete network configuration analysis
+
+### 📤 Export & Logging System
+- **`export_results()`** - Export test results ke JSON, CSV, atau TXT
+- **`create_logger()`** - Advanced logging dengan multiple levels
+- **`batch_export()`** - Export multiple results dalam berbagai format
+
+### 🔧 Enhanced CLI Commands
+- **`speedtest`** - Speed testing dari command line
+- **`interfaces`** - Network interface analysis
+- **`analyze`** - Complete network analysis
+- **`export`** - Result export functionality
 
 ## 💻 Instalasi
 
@@ -76,7 +105,20 @@ pip install netdiag
 ### Import Library
 
 ```python
+# Core functions (v1.0.0)
 from netdiag import ping, traceroute, get_local_ip, get_public_ip, scan_ports, dns_lookup
+
+# Enhanced functions (v1.1.0)
+from netdiag import (
+    # Speed testing
+    bandwidth_test, ping_latency_test, connection_quality_test,
+    # Network interfaces  
+    get_network_interfaces, get_default_gateway, analyze_network_config,
+    # Export & logging
+    export_results, create_logger, batch_export,
+    # Enhanced DNS & ports
+    reverse_dns_lookup, dns_bulk_lookup, scan_common_ports, get_ip_info
+)
 ```
 
 ### Contoh Sederhana
@@ -94,6 +136,15 @@ print(f"IP address: {result['ip']}")
 # Get public IP
 result = get_public_ip()
 print(f"Your public IP: {result['ip']}")
+
+# NEW v1.1.0: Speed test
+speed_result = bandwidth_test('5MB')
+print(f"Download speed: {speed_result['download_speed_mbps']} Mbps")
+
+# NEW v1.1.0: Network interfaces
+interfaces = get_network_interfaces()
+for interface in interfaces['active_interfaces']:
+    print(f"{interface['name']}: {interface['ip']}")
 ```
 
 ## 🛠️ Fungsi yang Tersedia
@@ -224,20 +275,160 @@ Melakukan DNS lookup.
 }
 ```
 
-## 🖥️ Command Line Interface
+## 🆕 Fungsi Baru v1.1.0
 
-Netdiag juga dapat digunakan melalui command line:
+### 🚀 `bandwidth_test(test_size='5MB', timeout=30)`
 
-### Ping
-```bash
-python -m netdiag ping google.com
-python -m netdiag ping google.com 5 10  # 5 packets, 10s timeout
+Melakukan bandwidth test dengan download file test.
+
+**Parameters:**
+- `test_size` (str): Ukuran test file ('1MB', '5MB', '10MB')
+- `timeout` (int): Timeout dalam detik (default: 30)
+
+**Returns:**
+```python
+{
+    'success': True,
+    'test_size': '5MB',
+    'download_speed_mbps': 25.34,
+    'download_time': 1.58,
+    'bytes_downloaded': 5242880,
+    'test_url': 'https://speed.hetzner.de/5MB.bin'
+}
 ```
 
-### Traceroute
+### 📊 `ping_latency_test(host, count=10)`
+
+Advanced latency analysis dengan statistik lengkap.
+
+**Parameters:**
+- `host` (str): Hostname atau IP address
+- `count` (int): Jumlah ping (default: 10)
+
+**Returns:**
+```python
+{
+    'success': True,
+    'host': 'google.com',
+    'total_pings': 10,
+    'successful_pings': 10,
+    'avg_latency': 28.5,
+    'min_latency': 22.1,
+    'max_latency': 35.7,
+    'jitter': 4.2,
+    'packet_loss_percent': 0.0
+}
+```
+
+### 🌐 `get_network_interfaces()`
+
+Mendapatkan informasi semua network interfaces.
+
+**Returns:**
+```python
+{
+    'success': True,
+    'system': 'windows',
+    'total_interfaces': 5,
+    'active_interfaces': [
+        {
+            'name': 'Wi-Fi',
+            'ip': '192.168.1.100',
+            'mac': '00:11:22:33:44:55',
+            'status': 'up',
+            'type': 'wireless'
+        }
+    ]
+}
+```
+
+### 📤 `export_results(results, filename, format='json')`
+
+Export test results ke file.
+
+**Parameters:**
+- `results` (dict): Hasil dari fungsi netdiag
+- `filename` (str): Nama file output
+- `format` (str): Format export ('json', 'csv', 'txt')
+
+**Returns:**
+```python
+{
+    'success': True,
+    'filename': 'ping_test_20251002.json',
+    'format': 'json',
+    'file_size': 1024,
+    'records_exported': 1
+}
+```
+
+### 🔍 `connection_quality_test(host)`
+
+Comprehensive connection quality assessment.
+
+**Returns:**
+```python
+{
+    'success': True,
+    'quality_score': 85,
+    'quality_rating': 'Very Good',
+    'bandwidth_test': {...},
+    'latency_test': {...},
+    'recommendations': [
+        'Connection quality looks good!',
+        'Suitable for HD streaming and gaming'
+    ]
+}
+```
+```
+
+## 🖥️ Command Line Interface
+
+Netdiag menyediakan interface command line yang lengkap:
+
+### Network Diagnostics
 ```bash
+# Ping testing
+python -m netdiag ping google.com
+python -m netdiag ping google.com 5 10  # 5 packets, 10s timeout
+
+# Traceroute
 python -m netdiag traceroute google.com
 python -m netdiag traceroute google.com 20 3  # max 20 hops, 3s timeout
+
+# Port scanning
+python -m netdiag scan google.com 80 443 22
+python -m netdiag scan-range google.com 80 90  # scan range 80-90
+```
+
+### 🚀 Performance Testing (NEW v1.1.0)
+```bash
+# Speed test - bandwidth testing
+python -m netdiag speedtest
+python -m netdiag speedtest --host httpbin.org --duration 10
+
+# Latency analysis
+python -m netdiag latency google.com
+python -m netdiag latency google.com --count 20
+
+# Connection quality assessment
+python -m netdiag quality google.com
+```
+
+### 🔧 System Analysis (NEW v1.1.0)
+```bash
+# Network interfaces discovery
+python -m netdiag interfaces
+
+# Network configuration analysis
+python -m netdiag analyze
+```
+
+### 📊 Export & Logging (NEW v1.1.0)
+```bash
+# Export results to various formats
+python -m netdiag export results.json --format json
+python -m netdiag export results.csv --format csv
 ```
 
 ### IP Utilities
@@ -261,6 +452,32 @@ python -m netdiag dns info github.com
 python -m netdiag dns bulk google.com,github.com,stackoverflow.com
 ```
 
+### 🆕 NEW v1.1.0 Commands
+
+### Speed Testing
+```bash
+python -m netdiag speedtest 5MB
+python -m netdiag speedtest latency google.com
+python -m netdiag speedtest quality google.com
+```
+
+### Network Interfaces
+```bash
+python -m netdiag interfaces
+python -m netdiag interfaces gateway
+```
+
+### Network Analysis
+```bash
+python -m netdiag analyze
+```
+
+### Export Results
+```bash
+python -m netdiag export json results
+python -m netdiag export csv results
+```
+
 ### Help
 ```bash
 python -m netdiag help
@@ -268,13 +485,13 @@ python -m netdiag help
 
 ## 💡 Contoh Penggunaan
 
-### Analisis Host Lengkap
+### 🔬 Analisis Host Lengkap dengan Fitur Baru
 
 ```python
 from netdiag import *
 
-def analyze_host(hostname):
-    print(f"🔬 Analyzing {hostname}...")
+def comprehensive_host_analysis(hostname):
+    print(f"🔬 Comprehensive Analysis of {hostname}...")
     
     # 1. DNS Resolution
     dns_result = dns_lookup(hostname)
@@ -285,201 +502,393 @@ def analyze_host(hostname):
         print(f"❌ DNS failed: {dns_result['error']}")
         return
     
-    # 2. Ping Test
-    ping_result = ping(ip, count=3)
+    # 2. Connectivity Test
+    ping_result = ping(ip, count=5)
     if ping_result['success']:
         print(f"✅ Host reachable (avg: {ping_result['avg_time']} ms)")
     else:
         print(f"❌ Host unreachable")
+        return
     
-    # 3. Port Scan
+    # 3. Connection Quality Assessment (NEW v1.1.0)
+    quality_result = connection_quality_test(hostname)
+    if quality_result['success']:
+        print(f"🎯 Connection Quality: {quality_result['quality_rating']} (Score: {quality_result['quality_score']}/100)")
+    
+    # 4. Bandwidth Test (NEW v1.1.0)
+    bandwidth_result = bandwidth_test(host=hostname, duration=5)
+    if bandwidth_result['success']:
+        print(f"🚀 Bandwidth: {bandwidth_result['download_speed']:.2f} MB/s down, {bandwidth_result['upload_speed']:.2f} MB/s up")
+    
+    # 5. Port Scan
     from netdiag.portscan import scan_common_ports
     port_result = scan_common_ports(hostname)
     if port_result['success'] and port_result['open_ports']:
-        print(f"✅ Open services: {port_result['open_ports']}")
-    else:
-        print("🔒 No common services found")
+        print(f"🔓 Open services: {port_result['open_ports']}")
+    
+    # 6. Export Results (NEW v1.1.0)
+    results = {
+        'hostname': hostname,
+        'dns': dns_result,
+        'ping': ping_result,
+        'quality': quality_result,
+        'bandwidth': bandwidth_result,
+        'ports': port_result
+    }
+    
+    export_result = export_results(results, f'{hostname}_analysis', 'json')
+    if export_result['success']:
+        print(f"📄 Results exported to: {export_result['filename']}")
 
-# Jalankan analisis
-analyze_host("github.com")
+# Jalankan analisis lengkap
+comprehensive_host_analysis("github.com")
 ```
 
-### Monitoring Multiple Hosts
+### 🌐 Network System Analysis (NEW v1.1.0)
 
 ```python
-from netdiag.dnslookup import dns_bulk_lookup
-from netdiag import ping
+from netdiag import get_network_interfaces, get_default_gateway, analyze_network_config
 
-def monitor_hosts(hostnames):
+def analyze_network_system():
+    print("🔧 Analyzing Network System Configuration...")
+    
+    # 1. Network Interfaces
+    interfaces = get_network_interfaces()
+    if interfaces['success']:
+        print(f"🔌 Found {len(interfaces['interfaces'])} network interfaces:")
+        for iface in interfaces['interfaces']:
+            print(f"  - {iface['name']}: {iface['ip']} ({iface['status']})")
+    
+    # 2. Default Gateway
+    gateway = get_default_gateway()
+    if gateway['success']:
+        print(f"🌉 Default Gateway: {gateway['gateway']}")
+    
+    # 3. Network Configuration Analysis
+    config = analyze_network_config()
+    if config['success']:
+        print(f"� Network Analysis:")
+        print(f"  - Active Interfaces: {len(config['active_interfaces'])}")
+        print(f"  - Default Route: {config['default_route']}")
+        print(f"  - DNS Servers: {', '.join(config.get('dns_servers', []))}")
+
+analyze_network_system()
+```
+
+### 📊 Performance Monitoring with Export
+
+```python
+from netdiag import ping_latency_test, bandwidth_test, export_results
+from netdiag.export import NetdiagLogger
+import time
+
+def monitor_performance(host, duration_minutes=5):
+    logger = NetdiagLogger('performance_monitor')
+    results = []
+    
+    print(f"📈 Monitoring {host} for {duration_minutes} minutes...")
+    
+    end_time = time.time() + (duration_minutes * 60)
+    
+    while time.time() < end_time:
+        # Latency test
+        latency = ping_latency_test(host, count=3)
+        
+        # Bandwidth test (shorter duration for monitoring)
+        bandwidth = bandwidth_test(host=host, duration=3)
+        
+        result = {
+            'timestamp': time.time(),
+            'host': host,
+            'latency': latency,
+            'bandwidth': bandwidth
+        }
+        
+        results.append(result)
+        logger.log_test_result('performance_monitor', result)
+        
+        if latency['success']:
+            print(f"⏱️  Latency: {latency['avg_ms']:.1f}ms", end="")
+        
+        if bandwidth['success']:
+            print(f" | 🚀 Speed: {bandwidth['download_speed']:.1f} MB/s")
+        
+        time.sleep(30)  # Test every 30 seconds
+    
+    # Export all results
+    export_results(results, f'{host}_performance_monitor', 'csv')
+    print(f"✅ Monitoring complete. Results saved.")
+
+# Monitor performance
+monitor_performance("google.com", duration_minutes=2)
+```
+
+### 🔍 Multi-Host Network Assessment
+
+```python
+from netdiag import dns_bulk_lookup, ping, connection_quality_test
+
+def assess_multiple_hosts(hostnames):
+    print("🎯 Assessing Multiple Hosts...")
+    
     # Bulk DNS lookup
     dns_results = dns_bulk_lookup(hostnames)
+    assessment_results = []
     
     for result in dns_results['results']:
         if result['success']:
-            # Ping each resolved host
-            ping_result = ping(result['ip'], count=1, timeout=3)
-            status = "🟢 UP" if ping_result['success'] else "🔴 DOWN"
-            print(f"{status} {result['hostname']} ({result['ip']})")
-
-# Monitor beberapa host
-hosts = ["google.com", "github.com", "stackoverflow.com"]
-monitor_hosts(hosts)
-```
-
-### Network Information Gathering
-
-```python
-from netdiag import get_local_ip, get_public_ip
-from netdiag.iputils import get_ip_info
-
-def network_info():
-    # Local network info
-    local = get_local_ip()
-    if local['success']:
-        print(f"🏠 Local IP: {local['ip']}")
+            host_assessment = {
+                'hostname': result['hostname'],
+                'ip': result['ip']
+            }
+            
+            # Quick ping test
+            ping_result = ping(result['ip'], count=3, timeout=5)
+            host_assessment['ping'] = ping_result
+            
+            # Quality assessment for reachable hosts
+            if ping_result['success']:
+                quality = connection_quality_test(result['hostname'])
+                host_assessment['quality'] = quality
+                
+                status = "� EXCELLENT" if quality.get('quality_score', 0) > 80 else \
+                        "🟡 GOOD" if quality.get('quality_score', 0) > 60 else \
+                        "🔴 POOR"
+                
+                print(f"{status} {result['hostname']}: {quality.get('quality_rating', 'Unknown')}")
+            else:
+                print(f"🔴 DOWN {result['hostname']}: Unreachable")
+            
+            assessment_results.append(host_assessment)
     
-    # Public network info
-    public = get_public_ip()
-    if public['success']:
-        print(f"🌐 Public IP: {public['ip']}")
-        
-        # Get geolocation info
-        info = get_ip_info(public['ip'])
-        if info['success']:
-            print(f"📍 Location: {info['city']}, {info['country']}")
-            print(f"🏢 ISP: {info['isp']}")
+    # Export comprehensive results
+    export_results(assessment_results, 'multi_host_assessment', 'json')
+    return assessment_results
 
-network_info()
+# Assess multiple hosts
+hosts = ["google.com", "github.com", "stackoverflow.com", "reddit.com"]
+assess_multiple_hosts(hosts)
 ```
 
-## 📁 Struktur Proyek
+## 📁 Struktur Proyek v1.1.0
 
 ```
 netdiag/
 ├── netdiag/
-│   ├── __init__.py          # Main package exports
-│   ├── __main__.py          # CLI interface
+│   ├── __init__.py          # Main package exports (19 functions)
+│   ├── __main__.py          # Enhanced CLI interface (11 commands)
 │   ├── ping.py              # Ping functionality
-│   ├── traceroute.py        # Traceroute functionality
+│   ├── traceroute.py        # Traceroute functionality  
 │   ├── iputils.py           # IP utilities (local/public IP, IP info)
-│   ├── portscan.py          # Port scanning
-│   └── dnslookup.py         # DNS lookup operations
-├── setup.py                 # Package setup
-├── README.md               # Documentation (this file)
-└── example.py              # Usage examples
+│   ├── portscan.py          # Port scanning capabilities
+│   ├── dnslookup.py         # DNS lookup operations
+│   ├── speedtest.py         # 🆕 Bandwidth testing & latency analysis
+│   ├── interfaces.py        # 🆕 Network interfaces & system discovery
+│   └── export.py            # 🆕 Results export & advanced logging
+├── setup.py                 # Package setup (v1.1.0)
+├── README.md               # Enhanced documentation  
+├── CHANGELOG.md            # 🆕 Version history & features
+└── example.py              # Updated usage examples with new features
 ```
+
+### 🆕 New Modules in v1.1.0
+
+- **speedtest.py**: Bandwidth testing, latency analysis, connection quality assessment
+- **interfaces.py**: Network interface discovery, gateway detection, configuration analysis  
+- **export.py**: Multi-format export (JSON/CSV/TXT), advanced logging, batch operations
 
 ## 🧪 Testing dan Development
 
-### Menjalankan Contoh
+### Menjalankan Contoh dengan Fitur Baru
 
 ```bash
-# Jalankan semua demo
+# Jalankan semua demo (including new v1.1.0 features)
 python example.py
 
 # Jalankan demo spesifik
 python example.py ping
-python example.py dns
+python example.py dns  
 python example.py port
+python example.py speedtest    # 🆕 NEW v1.1.0
+python example.py interfaces   # 🆕 NEW v1.1.0
 ```
 
-### Testing Manual
+### Testing Fitur Baru v1.1.0
 
 ```bash
-# Test individual modules
-python -m netdiag.ping google.com
-python -m netdiag.traceroute google.com
-python -m netdiag.portscan google.com common
+# Test bandwidth capabilities
+python -c "from netdiag import bandwidth_test; print(bandwidth_test())"
+
+# Test network interfaces
+python -c "from netdiag import get_network_interfaces; print(get_network_interfaces())"
+
+# Test connection quality  
+python -c "from netdiag import connection_quality_test; print(connection_quality_test('google.com'))"
+
+# Test export functionality
+python -c "from netdiag import export_results; print(export_results({'test': 'data'}, 'test', 'json'))"
+```
+
+### Manual Testing dari Command Line
+
+```bash
+# Test original functionality
+python -m netdiag ping google.com
+python -m netdiag traceroute google.com  
+python -m netdiag portscan google.com common
+
+# Test new v1.1.0 CLI commands
+python -m netdiag speedtest
+python -m netdiag interfaces
+python -m netdiag analyze
+python -m netdiag export test_results.json --format json
 ```
 
 ## 🎓 Educational Notes
 
-### Konsep yang Dipelajari
+### Konsep yang Dipelajari dalam v1.1.0
 
-1. **Networking Fundamentals**
-   - TCP/IP stack
-   - DNS resolution
-   - Port dan services
-   - Routing dan path analysis
+1. **Advanced Networking**
+   - Bandwidth measurement techniques
+   - Network interface enumeration
+   - Quality of Service (QoS) assessment
+   - Performance monitoring methodologies
 
-2. **Python Programming**
-   - Subprocess handling
-   - Socket programming
-   - Threading untuk performance
-   - Error handling dan exception management
-   - Regular expressions untuk parsing
+2. **Enhanced Python Programming**
+   - Concurrent testing with threading
+   - File I/O operations (JSON, CSV, TXT)
+   - Cross-platform system calls
+   - Advanced data structure manipulation
+   - Logging and monitoring systems
 
-3. **System Administration**
-   - Cross-platform compatibility
-   - Command-line tools integration
-   - Network diagnostics workflow
+3. **Professional Development Practices**
+   - Version management and changelog maintenance
+   - Backward compatibility preservation
+   - Comprehensive documentation
+   - Modular architecture design
 
 ### Best Practices Demonstrated
 
-- Menggunakan standard library sebanyak mungkin
-- Error handling yang robust
-- Documentation yang lengkap
-- Code yang modular dan reusable
-- Cross-platform compatibility
+- ✅ Standard library preference for compatibility
+- ✅ Robust error handling with detailed feedback
+- ✅ Comprehensive documentation with examples
+- ✅ Modular, reusable code architecture
+- ✅ Cross-platform compatibility maintained
+- ✅ **NEW**: Performance testing methodologies
+- ✅ **NEW**: Data export and persistence patterns
+- ✅ **NEW**: System configuration analysis
 
-## 🔧 Advanced Usage
+## 🔧 Advanced Usage Examples
 
-### Custom Port Scanning
-
-```python
-from netdiag.portscan import scan_ports, get_service_name
-
-# Custom port range dengan threading
-result = scan_ports("target.com", 1, 1000, timeout=0.5, max_threads=50)
-
-# Print detailed results
-for port in result['open_ports']:
-    service = get_service_name(port)
-    print(f"Port {port}: {service}")
-```
-
-### Comprehensive DNS Analysis
+### Custom Performance Monitoring
 
 ```python
-from netdiag.dnslookup import get_dns_info, reverse_dns_lookup
+from netdiag import ping_latency_test, bandwidth_test
+from netdiag.export import NetdiagLogger
+import time
 
-# Full DNS information
-dns_info = get_dns_info("example.com")
+# Setup monitoring
+logger = NetdiagLogger('network_monitor')
+hosts = ['google.com', 'github.com', 'stackoverflow.com']
 
-if dns_info['success']:
-    print(f"IPv4 addresses: {dns_info['ipv4_addresses']}")
-    print(f"IPv6 addresses: {dns_info['ipv6_addresses']}")
+for host in hosts:
+    # Comprehensive testing
+    latency = ping_latency_test(host, count=10)
+    bandwidth = bandwidth_test(host=host, duration=5)
     
-    # Reverse lookup for each IP
-    for ip in dns_info['ipv4_addresses']:
-        reverse = reverse_dns_lookup(ip)
-        if reverse['success']:
-            print(f"{ip} → {reverse['hostname']}")
+    # Log results
+    logger.log_test_result('monitoring', {
+        'host': host,
+        'latency': latency,
+        'bandwidth': bandwidth,
+        'timestamp': time.time()
+    })
 ```
+
+### Network Interface Analysis
+
+```python
+from netdiag import get_network_interfaces, get_default_gateway, analyze_network_config
+
+# Get detailed interface information
+interfaces = get_network_interfaces()
+gateway = get_default_gateway()
+config = analyze_network_config()
+
+# Analyze configuration
+if all([interfaces['success'], gateway['success'], config['success']]):
+    print("🔧 Network Configuration Summary:")
+    print(f"   Active Interfaces: {len(config['active_interfaces'])}")
+    print(f"   Default Gateway: {gateway['gateway']}")
+    print(f"   Primary Interface: {config.get('primary_interface', 'Unknown')}")
+```
+
+## 🆕 What's New in v1.1.0
+
+### Major Enhancements
+- 🚀 **Bandwidth Testing**: Real-world speed testing capabilities
+- 🔧 **System Analysis**: Network interface and configuration discovery  
+- 📊 **Export Functions**: Multi-format result export with logging
+- ⚡ **Performance Tools**: Latency analysis and connection quality assessment
+- 🎯 **Enhanced CLI**: 4 new command-line tools for advanced diagnostics
+
+### Compatibility
+- ✅ **Backward Compatible**: All existing code continues to work
+- ✅ **Python 3.6+**: Maintained compatibility with older Python versions
+- ✅ **Cross-Platform**: Windows, macOS, and Linux support preserved
+- ✅ **Dependencies**: Still uses only Python standard library
 
 ## ⚠️ Limitations dan Considerations
 
-1. **Performance**: Port scanning bisa lambat untuk range yang besar
-2. **Network Dependencies**: Beberapa fungsi membutuhkan koneksi internet
-3. **Permissions**: Beberapa fitur mungkin membutuhkan elevated privileges
-4. **Platform Differences**: Output parsing bisa berbeda antar OS
-5. **Rate Limiting**: API eksternal mungkin memiliki rate limiting
+### Performance Considerations
+- **Bandwidth Testing**: May consume network data during testing
+- **Port Scanning**: Large ranges may take significant time
+- **Concurrent Operations**: Threading used but limited by network latency
+
+### Platform-Specific Notes
+- **Windows**: Some network interface data requires elevated privileges
+- **macOS/Linux**: Better support for detailed interface information
+- **Network Dependencies**: Internet connection required for external tests
+
+### Rate Limiting
+- **External APIs**: IP geolocation services may have rate limits
+- **Bandwidth Tests**: Avoid excessive testing to prevent ISP throttling
+- **DNS Queries**: Bulk operations should be used responsibly
 
 ## 🤝 Contributing
 
-Kontribusi sangat diharapkan! Silakan:
+Contributions welcome! For v1.1.0 and beyond:
 
 1. Fork repository ini
 2. Buat feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
+3. Test fitur baru dengan `python example.py`
+4. Update documentation jika diperlukan
+5. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+6. Push ke branch (`git push origin feature/AmazingFeature`)
+7. Buat Pull Request
+
+### Development Areas for Future Versions
+- IPv6 support enhancement
+- Additional export formats (XML, YAML)
+- Real-time monitoring dashboard
+- Network security scanning features
+- Integration with network monitoring tools
 
 ## 📜 License
 
 Distributed under the MIT License. See `LICENSE` file for more information.
 
-## 📞 Support
+## 📞 Support & Resources
+
+- 📚 **Documentation**: This README and inline code comments
+- 🐛 **Bug Reports**: Please open GitHub issues
+- 💡 **Feature Requests**: Suggestions welcome via GitHub discussions
+- 📖 **Learning**: Check `example.py` for practical usage patterns
+- 📋 **Changelog**: See `CHANGELOG.md` for version history
+
+---
+
+**netdiag v1.1.0** - From simple educational tool to professional networking toolkit! 🚀
 
 Jika ada pertanyaan atau issues:
 
