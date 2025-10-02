@@ -1,0 +1,30 @@
+# Include important files
+include README.md
+include LICENSE
+include *.txt
+include *.md
+
+# Include package data
+recursive-include netdiag *.py
+recursive-include netdiag *.md
+recursive-include netdiag *.txt
+
+# Exclude development and test files
+exclude example.py
+exclude tests/*
+exclude docs/*
+exclude .gitignore
+exclude .qodo/*
+exclude temp/*
+exclude scratch/*
+
+# Exclude compiled files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.orig
+global-exclude *.rej
+global-exclude *~
+global-exclude __pycache__/*
+global-exclude .git/*
+global-exclude .vscode/*
+global-exclude .idea/*

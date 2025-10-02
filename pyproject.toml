@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netdiag"
+dynamic = ["version"]
+description = "Network Diagnostics Toolkit untuk educational purposes"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Netdiag Developer", email = "developer@netdiag.edu"},
+]
+keywords = ["network", "diagnostics", "ping", "traceroute", "dns", "port-scan", "educational"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Intended Audience :: System Administrators",
+    "Topic :: System :: Networking",
+    "Topic :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.6"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "flake8"]
+test = ["pytest"]
+
+[project.urls]
+"Bug Reports" = "https://github.com/SatriaDivo/netdiag/issues"
+"Source" = "https://github.com/SatriaDivo/netdiag"
+"Documentation" = "https://github.com/SatriaDivo/netdiag/blob/main/README.md"
+
+[project.scripts]
+netdiag = "netdiag.__main__:main"
+
+[tool.setuptools]
+packages = ["netdiag"]
+
+[tool.setuptools.package-data]
+netdiag = ["*.md", "*.txt"]
+
+[tool.setuptools_scm]
+write_to = "netdiag/_version.py"
+
+[tool.black]
+line-length = 88
+target-version = ['py36']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | tests
+    | docs
+    | temp
+    | scratch
+  )/
+)
+'''
