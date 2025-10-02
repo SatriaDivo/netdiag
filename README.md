@@ -892,7 +892,7 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 
 Jika ada pertanyaan atau issues:
 
-- 📧 Email: developer@netdiag.edu
+- 📧 Email: satriadivop354@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/yourusername/netdiag/issues)
 - 📖 Docs: [Documentation](https://github.com/yourusername/netdiag/blob/main/README.md)
 
