@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "netdiag"
-dynamic = ["version"]
+version = "1.0.0"
 description = "Network Diagnostics Toolkit untuk educational purposes"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "Netdiag Developer", email = "developer@netdiag.edu"},
+    {name = "Satria Divo", email = "satriadivo@gmail.com"},
 ]
 keywords = ["network", "diagnostics", "ping", "traceroute", "dns", "port-scan", "educational"]
 classifiers = [

@@ -17,8 +17,8 @@ setup(
     description='Network Diagnostics Toolkit untuk educational purposes',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author='Netdiag Developer',
-    author_email='developer@netdiag.edu',
+    author='Satria Divo',
+    author_email='satriadivo@gmail.com',
     url='https://github.com/yourusername/netdiag',
     
     # Klasifikasi package
