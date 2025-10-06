@@ -43,7 +43,8 @@ test = ["pytest"]
 netdiag = "netdiag.__main__:main"
 
 [tool.setuptools]
-packages = ["netdiag"]
+packages = {find = {}}
+package-dir = {"" = "."}
 
 [tool.setuptools.package-data]
 netdiag = ["*.md", "*.txt"]
