@@ -126,7 +126,6 @@ Thumbs.db
 
 # Custom exclusions
 tests/
-docs/
 .qodo/
 temp/
 scratch/
