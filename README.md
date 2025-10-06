@@ -1,6 +1,6 @@
 # 🔧 Netdiag - Network Diagnostics Toolkit v1.1.0
 
-[![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://python.org)
+[![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Educational](https://img.shields.io/badge/purpose-educational-orange.svg)](https://github.com/SatriaDivo/netdiag)
 [![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/SatriaDivo/netdiag)
@@ -96,7 +96,7 @@ pip install netdiag
 
 ### Requirements
 
-- Python 3.6 atau lebih baru
+- Python 3.7 atau lebih baru (memanfaatkan modern Python features)
 - Tidak ada external dependencies (hanya menggunakan standard library)
 - Akses internet untuk fungsi IP publik dan IP info
 
@@ -119,6 +119,32 @@ from netdiag import (
     # Enhanced DNS & ports
     reverse_dns_lookup, dns_bulk_lookup, scan_common_ports, get_ip_info
 )
+
+# Modern Python 3.7+ features
+from netdiag import (
+    NetworkConfiguration, EnhancedNetworkResult, 
+    NetworkTimeoutError, create_network_result_factory
+)
+```
+
+### Python 3.7+ Modern Features
+
+```python
+# Modern dataclass with slots and frozen for better performance
+config = NetworkConfiguration(
+    host="google.com", 
+    port=443, 
+    timeout=10
+)
+
+# Method chaining dengan fluent interface
+result = EnhancedNetworkResult(success=True) \
+    .add_tag("production") \
+    .add_tag("monitoring") \
+    .with_metadata(source="automated", priority="high")
+
+print(f"Connection: {config.connection_string}")
+print(f"Tags: {result.tags}")
 ```
 
 ### Contoh Sederhana
@@ -833,8 +859,8 @@ if all([interfaces['success'], gateway['success'], config['success']]):
 - 🎯 **Enhanced CLI**: 4 new command-line tools for advanced diagnostics
 
 ### Compatibility
-- ✅ **Backward Compatible**: All existing code continues to work
-- ✅ **Python 3.6+**: Maintained compatibility with older Python versions
+- ✅ **Modern Python**: Upgraded to Python 3.7+ with modern type hints and features
+- ✅ **Enhanced Architecture**: Clean code principles with dataclasses and protocols
 - ✅ **Cross-Platform**: Windows, macOS, and Linux support preserved
 - ✅ **Dependencies**: Still uses only Python standard library
 

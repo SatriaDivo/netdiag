@@ -130,3 +130,6 @@ docs/
 .qodo/
 temp/
 scratch/
+update_*.py
+*_temp.py
+*_script.py
