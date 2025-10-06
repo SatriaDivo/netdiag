@@ -1,6 +1,6 @@
 # 🔧 Netdiag - Network Diagnostics Toolkit v1.1.0
 
-[![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://python.org)
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Educational](https://img.shields.io/badge/purpose-educational-orange.svg)](https://github.com/SatriaDivo/netdiag)
 [![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/SatriaDivo/netdiag)

@@ -30,12 +30,11 @@ setup(
         'Topic :: Education',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Operating System :: OS Independent',
     ],
     
@@ -46,7 +45,7 @@ setup(
     packages=find_packages(exclude=['tests*', 'docs*', 'examples*', 'temp*', 'scratch*']),
     
     # Python version requirement
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     
     # Dependencies (menggunakan modul bawaan Python sebanyak mungkin)
     install_requires=[

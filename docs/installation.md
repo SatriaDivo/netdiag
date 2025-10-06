@@ -5,7 +5,7 @@ This guide will help you install **Netdiag v1.1.0** and set up your development 
 ## 📋 Prerequisites
 
 ### System Requirements
-- **Python**: 3.7 or higher
+- **Python**: 3.8 or higher
 - **Operating System**: Windows, macOS, or Linux
 - **Memory**: Minimum 512MB RAM (1GB+ recommended)
 - **Disk Space**: 50MB for installation
